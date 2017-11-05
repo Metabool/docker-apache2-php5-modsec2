@@ -43,14 +43,18 @@ RUN sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php5/apache2/php.
     sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php5/apache2/php.ini && \
     cp /etc/modsecurity/modsecurity.conf-recommended /etc/modsecurity/modsecurity.conf && \
     a2enmod headers && \
-    a2dismod status 
+    a2dismod status  && \
+    a2enmod remoteip
 RUN sed -i 's/ServerTokens OS/ServerTokens Minimal/g' /etc/apache2/conf-enabled/security.conf && \
     sed -i 's/ServerSignature On/#ServerSignature On/g' /etc/apache2/conf-enabled/security.conf && \
     sed -i 's/SecRuleEngine DetectionOnly/SecRuleEngine On\nInclude \/usr\/share\/modsecurity-crs\/*.conf\nInclude \/usr\/share\/modsecurity-crs\/base_rules\/*.conf\nInclude \/usr\/share\/modsecurity-crs\/optional_rules\/*.conf\nSecServerSignature "webserver"/g' /etc/modsecurity/modsecurity.conf && \
     sed -i 's/SecResponseBodyAccess On/SecResponseBodyAccess Off/g' /etc/modsecurity/modsecurity.conf && \
     sed -i 's/#SecDebugLogLevel 3/SecDebugLogLevel 0/g' /etc/modsecurity/modsecurity.conf && \
     sed -i 's/#SecDebugLog \/opt\/modsecurity\/var\/log\/debug.log/SecDebugLog \/var\/log\/apache2\/modsec_debug.log/g' /etc/modsecurity/modsecurity.conf && \
-    sed -i 's/#ServerName www.example.com/#ServerName www.example.com\nSecRuleRemoveById 960017/g' /etc/apache2/sites-enabled/000-default.conf
+    sed -i 's/#ServerName www.example.com/#ServerName www.example.com\nSecRuleRemoveById 960017/g' /etc/apache2/sites-enabled/000-default.conf && \
+    sed -i 's/LogFormat "%v:%p %h/LogFormat "%v:%p %a/g' /etc/apache2/apache2.conf && \
+    sed -i 's/LogFormat "%h/LogFormat "%a/g' /etc/apache2/apache2.conf && \
+    echo "RemoteIPHeader X-Real-IP\nRemoteIPTrustedProxy nginx-apache" > /etc/apache2/conf-enabled/remoteip.conf
 
 RUN mkdir -p /default_conf/apache2 && \
     mkdir -p /default_conf/modsecurity && \
