@@ -1,0 +1,27 @@
+version: '2'
+services:
+  metabool-apache:
+    image: metabool/apache2-php5-modsec2
+    # restart: always
+    container_name: metabool-apache
+    ports:
+      - 8082:80
+    volumes:
+      - /mnt/docker/websites/metabool-apache/html:/var/www/html
+      - /mnt/docker/websites/metabool-apache/conf-apache:/etc/apache2/
+      - /mnt/docker/websites/metabool-apache/conf-php5:/etc/php5/
+      - /mnt/docker/websites/metabool-apache/conf-modsecurity:/etc/modsecurity/
+      - /mnt/docker/websites/metabool-apache/conf-modsecurity-rules:/usr/share/modsecurity-crs/
+      - /mnt/docker/websites/metabool-apache/logs:/var/log/apache2/
+    links:
+      - mysql-apache
+
+  mysql-apache:
+    image: mariadb:10.2
+    container_name: mysql-apache
+    # restart: always
+    # Info : These variables are ignored when the volume already exists (databases created before).
+    environment:
+      - MYSQL_ROOT_PASSWORD=xxxxxxxxxxxxxxxxxx
+    volumes:
+      - /mnt/docker/websites/mysql-apache:/var/lib/mysql

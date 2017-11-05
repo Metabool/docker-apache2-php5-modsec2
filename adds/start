@@ -1,0 +1,28 @@
+#!/bin/bash
+if [ ! -f /etc/modsecurity/modsecurity.conf ]; then
+  echo "[INFO] Initializing mod_security config...";
+  cp -Rpv /default_conf/modsecurity/* /etc/modsecurity/
+  mkdir -p /etc/modsecurity/
+fi
+if [ ! -f /usr/share/modsecurity-crs/modsecurity_crs_10_setup.conf ]; then
+  echo "[INFO] Initializing mod_security CRS config...";
+  mkdir -p /usr/share/modsecurity-crs/
+  cp -Rpv /default_conf/modsecurity/crs_rules/* /usr/share/modsecurity-crs/
+fi
+
+if [ ! -f /etc/php5/apache2/php.ini ]; then
+  echo "[INFO] Initializing PHP5 config...";
+  mkdir -p /etc/php5/apache2
+  cp -Rpv /default_conf/php5/* /etc/php5/
+fi
+
+if [ ! -f /etc/apache2/apache2.conf ]; then
+  echo "[INFO] Initializing Apache2 config...";
+  mkdir -p /etc/apache2/
+  cp -Rpv  /default_conf/apache2/* /etc/apache2/
+fi
+if [ ! -f /var/www/html/index.html ]; then
+  echo "<h1>Welcome to Metabool's Apache2 Docker installation</h1>" > /var/www/html/index.html
+fi
+rm -f /var/run/apache2/apache2.pid
+/usr/sbin/apache2ctl -D FOREGROUND
